@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CodeAndThrottle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #0A0A0A;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    h1, h2 {
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    /* HERO */
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle, #111 0%, #000 100%);
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      color: #FF6A00;
+    }
+
+    .hero p {
+      margin-top: 10px;
+      opacity: 0.7;
+    }
+
+    .start-btn {
+      margin-top: 30px;
+      padding: 12px 30px;
+      border: none;
+      background: #FF6A00;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 30px;
+      transition: 0.3s;
+    }
+
+    .start-btn:hover {
+      transform: scale(1.1);
+    }
+
+    /* SECTION */
+    section {
+      padding: 80px 10%;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 40px;
+      color: #FF6A00;
+    }
+
+    /* INSTAGRAM GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 20px;
+      transition: 0.3s;
+      backdrop-filter: blur(10px);
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+    }
+
+    /* SPEC CARDS */
+    .specs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+      gap: 20px;
+    }
+
+    .spec-card {
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    .spec-card h3 {
+      color: #FF6A00;
+      margin-bottom: 10px;
+    }
+
+    /* TOGGLE */
+    .toggle {
+      margin: 20px 0;
+      cursor: pointer;
+      color: #FF6A00;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 40px;
+      opacity: 0.5;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Code → Throttle</h1>
+  <p>From Debugging Code to Burning Roads</p>
+  <button class="start-btn" onclick="startExperience()">Start Engine</button>
+</div>
+
+<!-- INSTAGRAM FEED -->
+<section id="feed">
+  <h2 class="section-title">📸 Ride Feed</h2>
+  <div class="grid" id="instaFeed">
+    <!-- Dynamic -->
+  </div>
+</section>
+
+<!-- MACHINE SPECS -->
+<section>
+  <h2 class="section-title">🏍 Machine Intelligence</h2>
+
+  <div class="toggle" onclick="toggleExplain()">Toggle Explain Mode</div>
+
+  <div class="specs" id="specs">
+    <div class="spec-card">
+      <h3>Engine</h3>
+      <p>249cc, Liquid Cooled</p>
+    </div>
+
+    <div class="spec-card">
+      <h3>Power</h3>
+      <p>31 bhp @ 9250 rpm</p>
+    </div>
+
+    <div class="spec-card">
+      <h3>Torque</h3>
+      <p>25 Nm @ 7250 rpm</p>
+    </div>
+
+    <div class="spec-card">
+      <h3>Top Speed</h3>
+      <p>148 km/h</p>
+    </div>
+  </div>
+</section>
+
+<!-- TIPS -->
+<section>
+  <h2 class="section-title">🧠 Rider Knowledge</h2>
+
+  <div class="grid">
+    <div class="card">⚠️ Break-in: Ride under 7k RPM</div>
+    <div class="card">🛠 First Service at 1000 km</div>
+    <div class="card">⛽ Mileage: 25–35 km/l</div>
+    <div class="card">🧼 Chain clean every 500 km</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  © CodeAndThrottle — Built with Passion 🔥
+</footer>
+
+<script>
+
+  // Start Animation
+  function startExperience() {
+    gsap.to(".hero", {
+      opacity: 0,
+      duration: 1,
+      onComplete: () => {
+        document.querySelector(".hero").style.display = "none";
+      }
+    });
+  }
+
+  // Fake Instagram Data (Replace with API later)
+  const posts = [
+    { title: "POV Ride 🔥" },
+    { title: "Night Ride 🌙" },
+    { title: "Dev to Rider 💻🏍" },
+    { title: "Throttle Therapy" }
+  ];
+
+  const feed = document.getElementById("instaFeed");
+
+  posts.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerText = p.title;
+    feed.appendChild(div);
+  });
+
+  // Explain Mode Toggle
+  let explain = false;
+
+  function toggleExplain() {
+    explain = !explain;
+
+    const specs = document.getElementById("specs");
+
+    if (explain) {
+      specs.innerHTML = `
+        <div class="spec-card"><h3>Power</h3><p>Speed & acceleration 🚀</p></div>
+        <div class="spec-card"><h3>Torque</h3><p>Pulling power 💪</p></div>
+        <div class="spec-card"><h3>Top Speed</h3><p>Max thrill 😎</p></div>
+        <div class="spec-card"><h3>Mileage</h3><p>Fuel efficiency ⛽</p></div>
+      `;
+    } else {
+      specs.innerHTML = `
+        <div class="spec-card"><h3>Engine</h3><p>249cc, Liquid Cooled</p></div>
+        <div class="spec-card"><h3>Power</h3><p>31 bhp @ 9250 rpm</p></div>
+        <div class="spec-card"><h3>Torque</h3><p>25 Nm @ 7250 rpm</p></div>
+        <div class="spec-card"><h3>Top Speed</h3><p>148 km/h</p></div>
+      `;
+    }
+  }
+
+</script>
+
+</body>
+</html>
