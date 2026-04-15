@@ -132,6 +132,21 @@
             <h2 class="text-4xl font-black italic uppercase tracking-tighter mb-12">The Feed</h2>
             <div id="feedGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"></div>
         </section>
+        
+ <!--       <section id="feed" class="py-32 px-6 max-w-7xl mx-auto">
+    <h2 class="text-4xl font-black italic uppercase tracking-tighter mb-12">The Feed</h2>
+    <div id="feedGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <div class="bg-zinc-900/50 rounded-3xl p-4 border border-white/5 flex justify-center">
+             <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DW_KZlcigwT/" data-instgrm-version="14" style="width:100%;"></blockquote>
+        </div>
+
+        <div class="bg-zinc-900/50 rounded-3xl p-4 border border-white/5 flex justify-center">
+             <blockquote class="instagram-media" data-instgrm-permalink="PASTE_ANOTHER_URL_HERE" data-instgrm-version="14" style="width:100%;"></blockquote>
+        </div>
+
+    </div>
+</section> -->
 
         <section id="hub" class="py-32 px-6 max-w-7xl mx-auto border-t border-white/5">
             <div class="flex items-center justify-between mb-12">
@@ -141,7 +156,7 @@
             <div id="hubGrid"></div>
         </section>
 
-        <footer class="py-20 text-center text-zinc-800 text-[10px] uppercase tracking-[1em] font-black">Code & Throttle | 2026 | Ready To Race.</footer>
+        <footer class="py-20 text-center text-zinc-800 text-[10px] uppercase tracking-[1em] font-black">Code & Throttle // 2026</footer>
     </div>
 
     <div id="infoModal" class="fixed inset-0 z-[200] flex items-center justify-center p-6">
@@ -156,6 +171,20 @@
     <script>
         let state = { speed: 0, gear: 1, isStreet: true };
 
+//function loadInstagramPosts() {
+    // 1. Create the Instagram script element
+ //   const script = document.createElement('script');
+//    script.src = "https://www.instagram.com/embed.js";
+//    script.async = true;
+//    document.body.appendChild(script);
+
+    // 2. Once the script loads, tell it to process the blockquotes
+//    script.onload = () => {
+ //       if (window.instgrm) {
+//            window.instgrm.Embeds.process();
+//        }
+//    };
+//}
         function startEngine() {
             document.getElementById('startupOverlay').style.opacity = '0';
             setTimeout(() => {
@@ -166,6 +195,8 @@
                 document.getElementById('bikeWrapper').classList.add('bike-entry');
                 document.getElementById('mainBike').classList.add('bike-vibration');
                 document.getElementById('roadEffect').classList.remove('hidden');
+                
+                //loadInstagramPosts(); // <--- CALL THIS HERE
                 animateMachine();
             }, 1000);
         }
@@ -246,6 +277,7 @@
                 grid.innerHTML += `<div onclick="openModal(${i})" class="snap-item p-10 rounded-[40px] bg-zinc-900 border border-white/5 hover:border-[#FF6A00]/50 transition-all cursor-pointer group"><div class="text-4xl mb-6 group-hover:scale-110 transition-transform">${tip.icon}</div><h3 class="text-xl font-black mb-2 uppercase italic">${tip.title}</h3><p class="text-zinc-500 text-sm leading-relaxed">${tip.desc}</p></div>`;
             });
         }
+
 
         function openModal(i) {
             const t = hubTips[i];
