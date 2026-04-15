@@ -13,31 +13,37 @@
 
         /* --- Animations --- */
         @keyframes driveIn { 0% { transform: translateX(-150vw); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
-        @keyframes engineVibrate { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+        @keyframes engineVibrate { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1px); } }
         @keyframes smokeFade { 0% { transform: translate(0, 0) scale(0.5); opacity: 0.6; } 100% { transform: translate(-80px, -40px) scale(2.5); opacity: 0; } }
         @keyframes roadSlide { from { background-position: 0 0; } to { background-position: -200px 0; } }
         @keyframes reveal { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes pulse-glow { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.5); opacity: 1; } }
 
         .bike-entry { animation: driveIn 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
-        .bike-vibration { animation: engineVibrate 0.1s infinite linear; }
+        .bike-vibration { animation: engineVibrate 0.05s infinite linear; }
         .animate-reveal { animation: reveal 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards; opacity: 0; }
-        .delay-200 { animation-delay: 0.2s; }
         
-        .smoke-particle { position: absolute; background: rgba(150, 150, 150, 0.4); border-radius: 50%; filter: blur(10px); pointer-events: none; z-index: 5; animation: smokeFade 0.7s ease-out forwards; }
-        .road-line { background: linear-gradient(90deg, transparent 0%, var(--primary) 50%, transparent 100%); background-size: 200px 100%; animation: roadSlide 0.5s infinite linear; opacity: 0.3; }
-        .glow-cursor { pointer-events: none; position: fixed; inset: 0; z-index: 9999; background: radial-gradient(600px at var(--x, 0px) var(--y, 0px), rgba(255, 106, 0, 0.1), transparent); }
-        .primary-text { color: var(--primary); }
-        .primary-bg { background-color: var(--primary); }
+        .smoke-particle { position: absolute; background: rgba(150, 150, 150, 0.3); border-radius: 50%; filter: blur(12px); pointer-events: none; z-index: 5; animation: smokeFade 0.8s ease-out forwards; }
+        .road-line { background: linear-gradient(90deg, transparent 0%, var(--primary) 50%, transparent 100%); background-size: 200px 100%; animation: roadSlide 0.4s infinite linear; opacity: 0.3; }
+        .glow-cursor { pointer-events: none; position: fixed; inset: 0; z-index: 9999; background: radial-gradient(600px at var(--x, 0px) var(--y, 0px), rgba(255, 106, 0, 0.08), transparent); }
 
-        /* --- Rider Hub Scroll --- */
-        #hubGrid { display: flex; overflow-x: auto; gap: 1.5rem; padding-bottom: 2rem; scroll-snap-type: x mandatory; }
+        /* --- Parallax & Hotspots --- */
+        .parallax-text { position: absolute; font-size: 25vw; font-weight: 900; color: transparent; -webkit-text-stroke: 1px rgba(255,106,0,0.15); text-transform: uppercase; white-space: nowrap; pointer-events: none; z-index: 1; transition: transform 0.1s ease-out; }
+        .hotspot { position: absolute; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; cursor: pointer; z-index: 20; }
+        .hotspot::after { content: ''; position: absolute; inset: -8px; border: 1px solid var(--primary); border-radius: 50%; animation: pulse-glow 2s infinite; }
+        .hotspot-label { position: absolute; left: 25px; top: 50%; transform: translateY(-50%); background: black; border: 1px solid var(--primary); padding: 4px 12px; border-radius: 4px; font-size: 10px; font-weight: bold; white-space: nowrap; opacity: 0; transition: 0.3s; pointer-events: none; }
+        .hotspot:hover .hotspot-label { opacity: 1; transform: translateY(-50%) translateX(10px); }
+
+        /* --- HUB SCROLL FIX --- */
+        #hubGrid { display: flex; overflow-x: auto; gap: 1.5rem; padding-bottom: 2rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
         #hubGrid::-webkit-scrollbar { height: 4px; display: block; }
         #hubGrid::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
         .snap-item { scroll-snap-align: start; flex: 0 0 300px; }
 
-        /* Initial state of main content */
         #mainContent { opacity: 0; visibility: hidden; transition: opacity 1s ease; }
         #infoModal { display: none; backdrop-filter: blur(15px); background: rgba(0,0,0,0.9); }
+        .primary-bg { background-color: var(--primary); }
+        .primary-text { color: var(--primary); }
     </style>
 </head>
 <body>
@@ -70,57 +76,61 @@
         </nav>
 
         <section class="relative h-screen flex items-center justify-center overflow-hidden">
-            <div class="absolute inset-0 z-0">
-                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#0A0A0A]/60 to-[#0A0A0A]"></div>
-                <img src="https://images.unsplash.com/photo-1558981403-c5f91cbba527?auto=format&fit=crop&w=2070" class="w-full h-full object-cover scale-110 opacity-30 mix-blend-luminosity">
+            <div class="parallax-text" id="bgText">DUKE</div>
+            <div class="absolute inset-0 z-0 opacity-20">
+                <img src="https://images.unsplash.com/photo-1558981403-c5f91cbba527?auto=format&fit=crop&q=80&w=2070" class="w-full h-full object-cover">
             </div>
+
             <div class="relative z-10 flex flex-col items-center">
-                <div id="bikeWrapper" class="relative">
+                <div id="bikeWrapper" class="relative transition-transform duration-300 ease-out">
                     <div id="smokeContainer" class="absolute inset-0 pointer-events-none"></div>
-                    <img id="mainBike" src="250duke-metalic-silver-webp.webp" class="w-full max-w-[550px] h-auto drop-shadow-[0_30px_60px_rgba(0,0,0,0.8)]">
+                    
+                    <div class="hotspot" style="top: 20%; left: 45%;"><div class="hotspot-label">WP APEX 43 SUSPENSION</div></div>
+                    <div class="hotspot" style="top: 55%; left: 55%;"><div class="hotspot-label">TRELLIS FRAME GEN-2</div></div>
+                    <div class="hotspot" style="top: 40%; left: 15%;"><div class="hotspot-label">LED HEADLIGHT 2.0</div></div>
+
+                    <img id="mainBike" src="250duke-metalic-silver-webp.webp" class="w-full max-w-[550px] h-auto drop-shadow-[0_40px_80px_rgba(0,0,0,0.9)] transition-transform duration-500">
                     <div id="roadEffect" class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[80%] h-[2px] road-line hidden"></div>
                 </div>
-                <div class="mt-10 text-center">
+                <div class="mt-10 text-center relative z-20">
                     <h1 class="text-6xl md:text-9xl font-black tracking-tighter uppercase italic leading-none">
                         <span class="block animate-reveal text-zinc-200">DEBUG THE</span>
-                        <span class="block animate-reveal delay-200 primary-text">LIMITS</span>
+                        <span class="block animate-reveal primary-text" style="animation-delay: 0.2s">LIMITS</span>
                     </h1>
                 </div>
             </div>
         </section>
 
         <section id="machine" class="py-32 px-6 max-w-7xl mx-auto">
-            <h2 class="text-4xl font-bold italic uppercase tracking-tighter mb-12">Machine Intelligence</h2>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="bg-zinc-900 border border-white/5 rounded-3xl p-8 relative overflow-hidden">
-                        <h3 class="text-xs font-bold text-zinc-500 mb-1 uppercase tracking-widest">Max Torque</h3>
+                    <div class="bg-zinc-900/50 border border-white/5 rounded-3xl p-10 relative overflow-hidden">
+                        <h3 class="text-xs font-bold text-zinc-500 mb-1 uppercase tracking-widest">Torque Load</h3>
                         <div class="text-4xl font-black italic mb-8">25 NM</div>
                         <svg class="w-full h-24" viewBox="0 0 400 100">
                             <path d="M10,80 Q200,80 390,80" stroke="#222" stroke-width="8" fill="none" />
-                            <path id="torqueLine" d="M10,80 Q200,80 390,80" stroke="#FF6A00" stroke-width="8" fill="none" stroke-dasharray="400" stroke-dashoffset="400" class="transition-all duration-1000" />
+                            <path id="torqueLine" d="M10,80 Q200,80 390,80" stroke="#FF6A00" stroke-width="8" fill="none" stroke-dasharray="400" stroke-dashoffset="400" />
                         </svg>
                     </div>
-                    <div class="bg-zinc-900 border border-white/5 rounded-3xl p-8">
-                        <h3 class="text-xs font-bold text-zinc-500 mb-4 uppercase tracking-widest">Top Speed</h3>
-                        <div class="text-6xl font-black italic mb-4"><span id="speedDisplay">0</span> KM/H</div>
-                        <div class="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
-                            <div id="speedBar" class="h-full bg-orange-600 transition-all duration-300" style="width: 0%"></div>
+                    <div class="bg-zinc-900/50 border border-white/5 rounded-3xl p-10">
+                        <h3 class="text-xs font-bold text-zinc-500 mb-4 uppercase tracking-widest">Velocity</h3>
+                        <div class="text-7xl font-black italic mb-4"><span id="speedDisplay">0</span> <span class="text-sm">KM/H</span></div>
+                        <div class="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
+                            <div id="speedBar" class="h-full bg-orange-600" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
-                <div class="primary-bg rounded-3xl p-8 flex flex-col justify-between text-black">
-                    <h3 class="text-3xl font-black italic uppercase leading-tight">Gearbox Logic</h3>
+                <div class="primary-bg rounded-3xl p-10 flex flex-col justify-between text-black">
+                    <h3 class="text-3xl font-black italic uppercase leading-tight text-black">6-Speed<br>Sequential</h3>
                     <div class="flex gap-2 my-8" id="gearContainer"></div>
-                    <button onclick="cycleGear()" class="w-full py-4 bg-black text-white font-black uppercase tracking-widest rounded-xl active:scale-95 transition-all">Shift Gear</button>
+                    <button onclick="cycleGear()" class="w-full py-5 bg-black text-white font-black uppercase tracking-widest rounded-2xl active:scale-95 transition-all">Shift Gear</button>
                 </div>
             </div>
         </section>
 
         <section id="feed" class="py-32 px-6 max-w-7xl mx-auto">
             <h2 class="text-4xl font-black italic uppercase tracking-tighter mb-12">The Feed</h2>
-            <div id="feedGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                </div>
+            <div id="feedGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"></div>
         </section>
 
         <section id="hub" class="py-32 px-6 max-w-7xl mx-auto border-t border-white/5">
@@ -128,11 +138,10 @@
                 <h2 class="text-4xl font-black italic uppercase tracking-tighter">Rider Hub</h2>
                 <span class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Scroll Right →</span>
             </div>
-            <div id="hubGrid">
-                </div>
+            <div id="hubGrid"></div>
         </section>
 
-        <footer class="py-20 text-center text-zinc-700 text-[10px] uppercase tracking-[0.5em] font-bold">Code & Throttle // Ready To Race</footer>
+        <footer class="py-20 text-center text-zinc-800 text-[10px] uppercase tracking-[1em] font-black">Code & Throttle | 2026 | Ready To Race.</footer>
     </div>
 
     <div id="infoModal" class="fixed inset-0 z-[200] flex items-center justify-center p-6">
@@ -154,14 +163,47 @@
                 const main = document.getElementById('mainContent');
                 main.style.visibility = 'visible';
                 main.style.opacity = '1';
-                
-                const bike = document.getElementById('bikeWrapper');
-                bike.classList.add('bike-entry');
+                document.getElementById('bikeWrapper').classList.add('bike-entry');
                 document.getElementById('mainBike').classList.add('bike-vibration');
                 document.getElementById('roadEffect').classList.remove('hidden');
-                
                 animateMachine();
             }, 1000);
+        }
+
+        window.addEventListener('mousemove', e => {
+            document.getElementById('cursorGlow').style.setProperty('--x', e.clientX + 'px');
+            document.getElementById('cursorGlow').style.setProperty('--y', e.clientY + 'px');
+            const moveX = (e.clientX - window.innerWidth / 2) / 50;
+            const bike = document.getElementById('mainBike');
+            bike.style.transform = `rotateY(${moveX}deg) rotateZ(${moveX/2}deg)`;
+        });
+
+        window.addEventListener('scroll', () => {
+            const scroll = window.scrollY;
+            document.getElementById('bgText').style.transform = `translateX(${scroll * 0.5}px)`;
+        });
+
+        function animateMachine() {
+            document.getElementById('torqueLine').style.transition = 'stroke-dashoffset 2s ease-out';
+            document.getElementById('torqueLine').style.strokeDashoffset = '0';
+            let interval = setInterval(() => {
+                if (state.speed < 148) {
+                    state.speed++;
+                    document.getElementById('speedDisplay').innerText = state.speed;
+                    document.getElementById('speedBar').style.width = (state.speed / 148 * 100) + '%';
+                    if (state.speed % 3 === 0) spawnSmoke();
+                } else clearInterval(interval);
+            }, 30);
+        }
+
+        function spawnSmoke() {
+            const container = document.getElementById('smokeContainer');
+            const smoke = document.createElement('div');
+            smoke.className = 'smoke-particle';
+            smoke.style.width = smoke.style.height = (Math.random() * 20 + 10) + 'px';
+            smoke.style.left = '15%'; smoke.style.bottom = '10%'; 
+            container.appendChild(smoke);
+            setTimeout(() => smoke.remove(), 800);
         }
 
         function cycleGear() {
@@ -173,30 +215,8 @@
             const container = document.getElementById('gearContainer'); container.innerHTML = '';
             for (let i = 1; i <= 6; i++) {
                 const active = i === state.gear;
-                container.innerHTML += `<div class="flex-1 h-12 rounded-xl border-2 border-black/20 flex items-center justify-center font-black ${active ? 'bg-black text-white scale-110' : 'text-black/30'}">${i}</div>`;
+                container.innerHTML += `<div class="flex-1 h-14 rounded-2xl border border-black/10 flex items-center justify-center font-black transition-all ${active ? 'bg-black text-white scale-110' : 'bg-white/10 text-black/40'}">${i}</div>`;
             }
-        }
-
-        function animateMachine() {
-            document.getElementById('torqueLine').style.strokeDashoffset = '0';
-            let interval = setInterval(() => {
-                if (state.speed < 148) {
-                    state.speed++;
-                    document.getElementById('speedDisplay').innerText = state.speed;
-                    document.getElementById('speedBar').style.width = (state.speed / 148 * 100) + '%';
-                    if (state.speed % 2 === 0) spawnSmoke();
-                } else clearInterval(interval);
-            }, 30);
-        }
-
-        function spawnSmoke() {
-            const container = document.getElementById('smokeContainer');
-            const smoke = document.createElement('div');
-            smoke.className = 'smoke-particle';
-            smoke.style.width = smoke.style.height = (Math.random() * 20 + 10) + 'px';
-            smoke.style.left = '20%'; smoke.style.bottom = '15%'; 
-            container.appendChild(smoke);
-            setTimeout(() => smoke.remove(), 700);
         }
 
         function renderFeed() {
@@ -208,10 +228,7 @@
                 'https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?auto=format&fit=crop&w=600&q=80'
             ];
             images.forEach(img => {
-                grid.innerHTML += `
-                    <div class="aspect-[4/5] bg-zinc-900 rounded-2xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-500">
-                        <img src="${img}" class="w-full h-full object-cover">
-                    </div>`;
+                grid.innerHTML += `<div class="aspect-[4/5] bg-zinc-900 rounded-2xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-500"><img src="${img}" class="w-full h-full object-cover"></div>`;
             });
         }
 
@@ -226,12 +243,7 @@
         function renderHub() {
             const grid = document.getElementById('hubGrid');
             hubTips.forEach((tip, i) => {
-                grid.innerHTML += `
-                    <div onclick="openModal(${i})" class="snap-item p-10 rounded-[40px] bg-zinc-900 border border-white/5 hover:border-[#FF6A00]/50 transition-all cursor-pointer group">
-                        <div class="text-4xl mb-6 group-hover:scale-110 transition-transform">${tip.icon}</div>
-                        <h3 class="text-xl font-black mb-2 uppercase italic">${tip.title}</h3>
-                        <p class="text-zinc-500 text-sm leading-relaxed">${tip.desc}</p>
-                    </div>`;
+                grid.innerHTML += `<div onclick="openModal(${i})" class="snap-item p-10 rounded-[40px] bg-zinc-900 border border-white/5 hover:border-[#FF6A00]/50 transition-all cursor-pointer group"><div class="text-4xl mb-6 group-hover:scale-110 transition-transform">${tip.icon}</div><h3 class="text-xl font-black mb-2 uppercase italic">${tip.title}</h3><p class="text-zinc-500 text-sm leading-relaxed">${tip.desc}</p></div>`;
             });
         }
 
@@ -250,11 +262,6 @@
             document.getElementById('modeIndicator').className = `w-2 h-2 rounded-full ${state.isStreet ? 'bg-green-500' : 'bg-red-500 animate-pulse'}`;
             document.getElementById('modeText').innerText = state.isStreet ? 'STREET MODE' : 'TRACK MODE';
         }
-
-        window.addEventListener('mousemove', e => {
-            document.getElementById('cursorGlow').style.setProperty('--x', e.clientX + 'px');
-            document.getElementById('cursorGlow').style.setProperty('--y', e.clientY + 'px');
-        });
 
         renderGears(); renderFeed(); renderHub();
     </script>
