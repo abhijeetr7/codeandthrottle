@@ -44,6 +44,42 @@
         #infoModal { display: none; backdrop-filter: blur(15px); background: rgba(0,0,0,0.9); }
         .primary-bg { background-color: var(--primary); }
         .primary-text { color: var(--primary); }
+        /* Make the Instagram iframe look integrated into the dark theme */
+iframe.instagram-media {
+    border-radius: 1.5rem !important;
+    background: #0A0A0A !important; /* Matches your body bg */
+    border: none !important;
+    box-shadow: none !important;
+    min-width: 100% !important;
+}
+
+/* Optional: Slight zoom effect on hover */
+.group:hover .instagram-media {
+    transform: scale(1.01);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+#lightbox {
+    animation: fadeIn 0.3s ease-out;
+}
+
+#lightboxImg {
+    animation: zoomIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* Make sure the grid is tight like Instagram's profile page */
+#feedGrid .aspect-square {
+    box-shadow: inset 0 0 100px rgba(0,0,0,0.5);
+}
     </style>
 </head>
 <body>
@@ -133,20 +169,28 @@
             <div id="feedGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"></div>
         </section>
         
- <!--       <section id="feed" class="py-32 px-6 max-w-7xl mx-auto">
-    <h2 class="text-4xl font-black italic uppercase tracking-tighter mb-12">The Feed</h2>
-    <div id="feedGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<section id="feed" class="py-32 px-6 max-w-7xl mx-auto">
+    <h2 class="text-4xl font-black italic uppercase tracking-tighter mb-12">The Feed From Instagram</h2>
+    <div id="feedGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
         
-        <div class="bg-zinc-900/50 rounded-3xl p-4 border border-white/5 flex justify-center">
-             <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DW_KZlcigwT/" data-instgrm-version="14" style="width:100%;"></blockquote>
+        <div class="group relative aspect-square overflow-hidden rounded-2xl cursor-pointer bg-zinc-900" 
+             onclick="openLightbox('https://instagram.fpnq7-8.fna.fbcdn.net/v/t51.82787-15/669586179_18080517194134892_2632766733833736566_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=100&amp;ig_cache_key=Mzg3Mjg1OTk0MzIyMTIwMTkzOQ%3D%3D.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjcxM3g3MTMuc2RyLkMzIn0%3D&amp;_nc_ohc=64XxPHc5DekQ7kNvwHVDVOy&amp;_nc_oc=AdpVGWpeiwxLhUMOaKj8F7IycB1mS3ljglIijvAQtK3GGVG6g0rb8xikbLDKdDHX20E&amp;_nc_ad=z-m&amp;_nc_cid=1174&amp;_nc_zt=23&amp;_nc_ht=instagram.fpnq7-8.fna&amp;_nc_gid=OdCakz7rNRONipPryIkwHg&amp;_nc_ss=7a32e&amp;oh=00_Af0HrXgfaxn_tJvx3qQ9yF64V-rT5Q_mm6gRY2JOQoATSw&amp;oe=69E540A6', 'https://instagram.fpnq7-8.fna.fbcdn.net/v/t51.82787-15/669586179_18080517194134892_2632766733833736566_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=100&amp;ig_cache_key=Mzg3Mjg1OTk0MzIyMTIwMTkzOQ%3D%3D.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjcxM3g3MTMuc2RyLkMzIn0%3D&amp;_nc_ohc=64XxPHc5DekQ7kNvwHVDVOy&amp;_nc_oc=AdpVGWpeiwxLhUMOaKj8F7IycB1mS3ljglIijvAQtK3GGVG6g0rb8xikbLDKdDHX20E&amp;_nc_ad=z-m&amp;_nc_cid=1174&amp;_nc_zt=23&amp;_nc_ht=instagram.fpnq7-8.fna&amp;_nc_gid=OdCakz7rNRONipPryIkwHg&amp;_nc_ss=7a32e&amp;oh=00_Af0HrXgfaxn_tJvx3qQ9yF64V-rT5Q_mm6gRY2JOQoATSw&amp;oe=69E540A6')">
+            <img src="https://instagram.fpnq7-8.fna.fbcdn.net/v/t51.82787-15/669586179_18080517194134892_2632766733833736566_n.jpg?stp=dst-jpg_e35_tt6&amp;_nc_cat=100&amp;ig_cache_key=Mzg3Mjg1OTk0MzIyMTIwMTkzOQ%3D%3D.3-ccb7-5&amp;ccb=7-5&amp;_nc_sid=58cdad&amp;efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjcxM3g3MTMuc2RyLkMzIn0%3D&amp;_nc_ohc=64XxPHc5DekQ7kNvwHVDVOy&amp;_nc_oc=AdpVGWpeiwxLhUMOaKj8F7IycB1mS3ljglIijvAQtK3GGVG6g0rb8xikbLDKdDHX20E&amp;_nc_ad=z-m&amp;_nc_cid=1174&amp;_nc_zt=23&amp;_nc_ht=instagram.fpnq7-8.fna&amp;_nc_gid=OdCakz7rNRONipPryIkwHg&amp;_nc_ss=7a32e&amp;oh=00_Af0HrXgfaxn_tJvx3qQ9yF64V-rT5Q_mm6gRY2JOQoATSw&amp;oe=69E540A6" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span class="text-white font-bold text-xs tracking-widest uppercase">View Post</span>
+            </div>
         </div>
 
-        <div class="bg-zinc-900/50 rounded-3xl p-4 border border-white/5 flex justify-center">
-             <blockquote class="instagram-media" data-instgrm-permalink="PASTE_ANOTHER_URL_HERE" data-instgrm-version="14" style="width:100%;"></blockquote>
         </div>
+</section>
 
-    </div>
-</section> -->
+<div id="lightbox" class="fixed inset-0 z-[300] hidden bg-black/95 flex flex-col items-center justify-center p-4 backdrop-blur-xl">
+    <button onclick="closeLightbox()" class="absolute top-10 right-10 text-white text-4xl font-light hover:text-[#FF6A00] transition-colors">✕</button>
+    <img id="lightboxImg" src="" class="max-w-full max-h-[70vh] rounded-xl shadow-2xl border border-white/10">
+    <a id="instaLink" href="#" target="_blank" class="mt-8 px-8 py-4 bg-[#FF6A00] text-black font-black uppercase tracking-widest rounded-full hover:scale-105 active:scale-95 transition-all">
+        Open on Instagram
+    </a>
+</div>
 
         <section id="hub" class="py-32 px-6 max-w-7xl mx-auto border-t border-white/5">
             <div class="flex items-center justify-between mb-12">
@@ -171,20 +215,48 @@
     <script>
         let state = { speed: 0, gear: 1, isStreet: true };
 
-//function loadInstagramPosts() {
-    // 1. Create the Instagram script element
- //   const script = document.createElement('script');
-//    script.src = "https://www.instagram.com/embed.js";
-//    script.async = true;
-//    document.body.appendChild(script);
+function loadInstagramPosts() {
+    // Only load the script if it doesn't exist
+    if (!document.getElementById('instagram-embed-script')) {
+        const script = document.createElement('script');
+        script.id = 'instagram-embed-script';
+        script.src = "https://www.instagram.com/embed.js";
+        script.async = true;
+        document.body.appendChild(script);
+        
+        script.onload = () => {
+            if (window.instgrm) {
+                window.instgrm.Embeds.process();
+            }
+        };
+    } else {
+        if (window.instgrm) {
+            window.instgrm.Embeds.process();
+        }
+    }
+}
+function openLightbox(imgUrl, instaUrl) {
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const instaLink = document.getElementById('instaLink');
 
-    // 2. Once the script loads, tell it to process the blockquotes
-//    script.onload = () => {
- //       if (window.instgrm) {
-//            window.instgrm.Embeds.process();
-//        }
-//    };
-//}
+    lightboxImg.src = imgUrl;
+    instaLink.href = instaUrl;
+    
+    lightbox.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling
+}
+
+function closeLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    lightbox.classList.add('hidden');
+    document.body.style.overflow = 'auto'; // Restore scrolling
+}
+
+// Close lightbox on 'Esc' key
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+});
         function startEngine() {
             document.getElementById('startupOverlay').style.opacity = '0';
             setTimeout(() => {
@@ -196,7 +268,7 @@
                 document.getElementById('mainBike').classList.add('bike-vibration');
                 document.getElementById('roadEffect').classList.remove('hidden');
                 
-                //loadInstagramPosts(); // <--- CALL THIS HERE
+                loadInstagramPosts(); // <--- CALL THIS HERE
                 animateMachine();
             }, 1000);
         }
