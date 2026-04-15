@@ -29,25 +29,15 @@
         .primary-text { color: var(--primary); }
         .primary-bg { background-color: var(--primary); }
 
-        /* --- HORIZONTAL SCROLL FIX --- */
-        #hubGrid {
-            display: flex;
-            overflow-x: auto;
-            gap: 1.5rem;
-            padding-bottom: 2rem;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-        }
+        /* --- Rider Hub Scroll --- */
+        #hubGrid { display: flex; overflow-x: auto; gap: 1.5rem; padding-bottom: 2rem; scroll-snap-type: x mandatory; }
         #hubGrid::-webkit-scrollbar { height: 4px; display: block; }
         #hubGrid::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
-        #hubGrid::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
-        
-        .snap-item { 
-            scroll-snap-align: start; 
-            flex: 0 0 300px; /* Fixed width for cards to force overflow */
-        }
+        .snap-item { scroll-snap-align: start; flex: 0 0 300px; }
 
-        .modal-overlay { backdrop-filter: blur(10px); background: rgba(0,0,0,0.85); display: none; }
+        /* Initial state of main content */
+        #mainContent { opacity: 0; visibility: hidden; transition: opacity 1s ease; }
+        #infoModal { display: none; backdrop-filter: blur(15px); background: rgba(0,0,0,0.9); }
     </style>
 </head>
 <body>
@@ -68,11 +58,11 @@
             <div class="text-2xl font-black tracking-tighter italic uppercase">CODE<span class="primary-text">&</span>THROTTLE</div>
             <div class="flex items-center gap-8">
                 <div class="hidden md:flex gap-6 text-[10px] uppercase tracking-[0.2em] font-medium text-zinc-400">
-                    <a href="#machine" class="hover:text-[#FF6A00]">Machine</a>
-                    <a href="#feed" class="hover:text-[#FF6A00]">Feed</a>
-                    <a href="#hub" class="hover:text-[#FF6A00]">Hub</a>
+                    <a href="#machine" class="hover:text-white transition-colors">Machine</a>
+                    <a href="#feed" class="hover:text-white transition-colors">Feed</a>
+                    <a href="#hub" class="hover:text-white transition-colors">Hub</a>
                 </div>
-                <button onclick="toggleRideMode()" class="px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md flex items-center gap-3 transition-all active:scale-95">
+                <button onclick="toggleRideMode()" class="px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md flex items-center gap-3 active:scale-95 transition-all">
                     <div id="modeIndicator" class="w-2 h-2 rounded-full bg-green-500"></div>
                     <span id="modeText" class="text-[10px] font-bold uppercase tracking-widest">STREET MODE</span>
                 </button>
@@ -85,7 +75,7 @@
                 <img src="https://images.unsplash.com/photo-1558981403-c5f91cbba527?auto=format&fit=crop&w=2070" class="w-full h-full object-cover scale-110 opacity-30 mix-blend-luminosity">
             </div>
             <div class="relative z-10 flex flex-col items-center">
-                <div id="bikeWrapper" class="relative opacity-0 transition-opacity duration-500">
+                <div id="bikeWrapper" class="relative">
                     <div id="smokeContainer" class="absolute inset-0 pointer-events-none"></div>
                     <img id="mainBike" src="250duke-metalic-silver-webp.webp" class="w-full max-w-[550px] h-auto drop-shadow-[0_30px_60px_rgba(0,0,0,0.8)]">
                     <div id="roadEffect" class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[80%] h-[2px] road-line hidden"></div>
@@ -100,43 +90,37 @@
         </section>
 
         <section id="machine" class="py-32 px-6 max-w-7xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
-                <div class="space-y-2">
-                    <h2 class="text-4xl font-bold italic uppercase tracking-tighter">Machine Intelligence</h2>
-                    <p class="text-zinc-500 uppercase tracking-widest text-xs">Technical Deep Dive / KTM Duke 250</p>
-                </div>
-                <button onclick="toggleExplain()" class="text-[10px] border border-zinc-800 px-4 py-2 rounded uppercase tracking-widest hover:bg-white hover:text-black">Explain Mode</button>
-            </div>
+            <h2 class="text-4xl font-bold italic uppercase tracking-tighter mb-12">Machine Intelligence</h2>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="bg-zinc-900 border border-white/5 rounded-3xl p-8 relative overflow-hidden">
-                        <h3 class="text-xs font-bold text-zinc-500 mb-1">Max Torque</h3>
+                        <h3 class="text-xs font-bold text-zinc-500 mb-1 uppercase tracking-widest">Max Torque</h3>
                         <div class="text-4xl font-black italic mb-8">25 NM</div>
                         <svg class="w-full h-24" viewBox="0 0 400 100">
                             <path d="M10,80 Q200,80 390,80" stroke="#222" stroke-width="8" fill="none" />
                             <path id="torqueLine" d="M10,80 Q200,80 390,80" stroke="#FF6A00" stroke-width="8" fill="none" stroke-dasharray="400" stroke-dashoffset="400" class="transition-all duration-1000" />
                         </svg>
-                        <p id="explainTip" class="mt-4 text-[10px] text-[#FF6A00] font-bold uppercase hidden">Instant surge delivery</p>
                     </div>
                     <div class="bg-zinc-900 border border-white/5 rounded-3xl p-8">
-                        <h3 class="text-xs font-bold text-zinc-500 mb-4">Top Speed</h3>
-                        <div class="text-6xl font-black italic tracking-tighter mb-4"><span id="speedDisplay">0</span> KM/H</div>
+                        <h3 class="text-xs font-bold text-zinc-500 mb-4 uppercase tracking-widest">Top Speed</h3>
+                        <div class="text-6xl font-black italic mb-4"><span id="speedDisplay">0</span> KM/H</div>
                         <div class="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
                             <div id="speedBar" class="h-full bg-orange-600 transition-all duration-300" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
                 <div class="primary-bg rounded-3xl p-8 flex flex-col justify-between text-black">
-                    <h3 class="text-3xl font-black italic uppercase">Gearbox Logic</h3>
+                    <h3 class="text-3xl font-black italic uppercase leading-tight">Gearbox Logic</h3>
                     <div class="flex gap-2 my-8" id="gearContainer"></div>
-                    <button onclick="cycleGear()" class="w-full py-4 bg-black text-white font-black uppercase tracking-widest rounded-xl">Downshift Sim</button>
+                    <button onclick="cycleGear()" class="w-full py-4 bg-black text-white font-black uppercase tracking-widest rounded-xl active:scale-95 transition-all">Shift Gear</button>
                 </div>
             </div>
         </section>
 
-        <section id="feed" class="py-24 px-6 max-w-7xl mx-auto">
+        <section id="feed" class="py-32 px-6 max-w-7xl mx-auto">
             <h2 class="text-4xl font-black italic uppercase tracking-tighter mb-12">The Feed</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" id="feedGrid"></div>
+            <div id="feedGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                </div>
         </section>
 
         <section id="hub" class="py-32 px-6 max-w-7xl mx-auto border-t border-white/5">
@@ -148,12 +132,12 @@
                 </div>
         </section>
 
-        <footer class="py-20 text-center text-zinc-700 text-[10px] uppercase tracking-[0.5em] font-bold">Code & Throttle</footer>
+        <footer class="py-20 text-center text-zinc-700 text-[10px] uppercase tracking-[0.5em] font-bold">Code & Throttle // Ready To Race</footer>
     </div>
 
-    <div id="infoModal" class="modal-overlay fixed inset-0 z-[200] flex items-center justify-center p-6">
+    <div id="infoModal" class="fixed inset-0 z-[200] flex items-center justify-center p-6">
         <div class="bg-zinc-900 border border-white/10 p-10 rounded-3xl max-w-lg w-full relative">
-            <button onclick="closeModal()" class="absolute top-6 right-6 text-zinc-500 text-2xl">✕</button>
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-zinc-500 hover:text-white text-2xl">✕</button>
             <div id="modalIcon" class="text-5xl mb-6"></div>
             <h2 id="modalTitle" class="text-3xl font-black italic uppercase primary-text mb-4"></h2>
             <p id="modalDesc" class="text-zinc-400 leading-relaxed"></p>
@@ -161,16 +145,21 @@
     </div>
 
     <script>
-        let state = { speed: 0, gear: 1, isStreet: true, explaining: false };
+        let state = { speed: 0, gear: 1, isStreet: true };
 
         function startEngine() {
             document.getElementById('startupOverlay').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('startupOverlay').style.display = 'none';
+                const main = document.getElementById('mainContent');
+                main.style.visibility = 'visible';
+                main.style.opacity = '1';
+                
                 const bike = document.getElementById('bikeWrapper');
-                bike.classList.add('bike-entry'); bike.style.opacity = '1';
+                bike.classList.add('bike-entry');
                 document.getElementById('mainBike').classList.add('bike-vibration');
                 document.getElementById('roadEffect').classList.remove('hidden');
+                
                 animateMachine();
             }, 1000);
         }
@@ -184,19 +173,8 @@
             const container = document.getElementById('gearContainer'); container.innerHTML = '';
             for (let i = 1; i <= 6; i++) {
                 const active = i === state.gear;
-                container.innerHTML += `<div class="flex-1 h-12 rounded-xl border-2 border-black/20 flex items-center justify-center font-black transition-all ${active ? 'bg-black text-white scale-110' : 'text-black/30'}">${i}</div>`;
+                container.innerHTML += `<div class="flex-1 h-12 rounded-xl border-2 border-black/20 flex items-center justify-center font-black ${active ? 'bg-black text-white scale-110' : 'text-black/30'}">${i}</div>`;
             }
-        }
-
-        function toggleRideMode() {
-            state.isStreet = !state.isStreet;
-            document.getElementById('modeIndicator').className = `w-2 h-2 rounded-full ${state.isStreet ? 'bg-green-500' : 'bg-red-500 animate-pulse'}`;
-            document.getElementById('modeText').innerText = state.isStreet ? 'STREET MODE' : 'TRACK MODE';
-        }
-
-        function toggleExplain() {
-            state.explaining = !state.explaining;
-            document.getElementById('explainTip').classList.toggle('hidden', !state.explaining);
         }
 
         function animateMachine() {
@@ -221,22 +199,38 @@
             setTimeout(() => smoke.remove(), 700);
         }
 
+        function renderFeed() {
+            const grid = document.getElementById('feedGrid');
+            const images = [
+                'https://images.unsplash.com/photo-1599819811279-d5ad9cccf838?auto=format&fit=crop&w=600&q=80',
+                'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=600&q=80',
+                'https://images.unsplash.com/photo-1622185135505-2d795003994a?auto=format&fit=crop&w=600&q=80',
+                'https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?auto=format&fit=crop&w=600&q=80'
+            ];
+            images.forEach(img => {
+                grid.innerHTML += `
+                    <div class="aspect-[4/5] bg-zinc-900 rounded-2xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-500">
+                        <img src="${img}" class="w-full h-full object-cover">
+                    </div>`;
+            });
+        }
+
         const hubTips = [
-            { icon: '⚠️', title: 'Break-in', desc: 'The "Beta" phase. Limit RPM to 7,500 for the first 1,000km.' },
-            { icon: '🧠', title: 'Slipper Clutch', desc: 'Prevents rear-wheel locking during downshifts.' },
-            { icon: '🔥', title: 'Chain Care', desc: 'Clean and lube every 500km to prevent technical debt.' },
-            { icon: '⚡', title: 'Quickshift', desc: 'Shift without clutch for maximum sprint efficiency.' },
-            { icon: '🌡️', title: 'Cooling', desc: 'Liquid-cooled engine optimized for Pune traffic.' }
+            { icon: '⚙️', title: 'Break-in', desc: 'Limit RPM to 7,500 for the first 1,000km to seat engine components.' },
+            { icon: '🧠', title: 'Slipper Clutch', desc: 'Prevents rear-wheel lock during aggressive downshifts.' },
+            { icon: '⛓️', title: 'Chain tension', desc: 'Keep at 5-7mm for optimal torque transfer.' },
+            { icon: '🔌', title: 'Ride-by-wire', desc: 'Recalibrates every start for crisp throttle response.' },
+            { icon: '🌡️', title: 'Cooling', desc: 'High-efficiency thermal management for urban traffic.' }
         ];
 
         function renderHub() {
             const grid = document.getElementById('hubGrid');
             hubTips.forEach((tip, i) => {
                 grid.innerHTML += `
-                    <div onclick="openModal(${i})" class="snap-item p-8 rounded-3xl bg-zinc-900 border border-white/5 hover:border-[#FF6A00]/40 transition-all cursor-pointer group shrink-0">
-                        <div class="text-3xl mb-4 grayscale group-hover:grayscale-0">${tip.icon}</div>
+                    <div onclick="openModal(${i})" class="snap-item p-10 rounded-[40px] bg-zinc-900 border border-white/5 hover:border-[#FF6A00]/50 transition-all cursor-pointer group">
+                        <div class="text-4xl mb-6 group-hover:scale-110 transition-transform">${tip.icon}</div>
                         <h3 class="text-xl font-black mb-2 uppercase italic">${tip.title}</h3>
-                        <p class="text-zinc-500 text-sm">${tip.desc}</p>
+                        <p class="text-zinc-500 text-sm leading-relaxed">${tip.desc}</p>
                     </div>`;
             });
         }
@@ -251,10 +245,10 @@
 
         function closeModal() { document.getElementById('infoModal').style.display = 'none'; }
 
-        function renderFeed() {
-            const grid = document.getElementById('feedGrid');
-            const p = 'https://images.unsplash.com/photo-1599819811279-d5ad9cccf838?auto=format&fit=crop&w=600&q=80';
-            for(let i=0; i<4; i++) grid.innerHTML += `<div class="aspect-[4/5] bg-zinc-900 rounded-2xl overflow-hidden grayscale hover:grayscale-0 transition-all"><img src="${p}" class="w-full h-full object-cover"></div>`;
+        function toggleRideMode() {
+            state.isStreet = !state.isStreet;
+            document.getElementById('modeIndicator').className = `w-2 h-2 rounded-full ${state.isStreet ? 'bg-green-500' : 'bg-red-500 animate-pulse'}`;
+            document.getElementById('modeText').innerText = state.isStreet ? 'STREET MODE' : 'TRACK MODE';
         }
 
         window.addEventListener('mousemove', e => {
